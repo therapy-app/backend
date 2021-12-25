@@ -1,6 +1,7 @@
 
 using backend.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection")));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ProdConnection")));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -88,7 +89,7 @@ builder.Services.AddSwaggerGen(swagger =>
 
 builder.Services.AddCors(opts => {
     opts.AddDefaultPolicy(builder => {
-        builder.WithOrigins("http://localhost:4200", "http://therapyapp.local", "https://therapyapp.local:4200", "https://therapyapp.ch")
+        builder.WithOrigins("http://localhost:4200", "https://therapyapp.local:4200", "https://therapyapp.ch", "https://my.therapyapp.ch")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -97,27 +98,6 @@ builder.Services.AddCors(opts => {
 
 
 var app = builder.Build();
-
-// For Docker
-//using var scope = app.Services.CreateScope();
-//var services = scope.ServiceProvider;
-
-//try
-//{
-//    var dbContext = services.GetRequiredService<ApplicationDbContext>();
-//    if (dbContext.Database.IsSqlServer())
-//    {
-//        dbContext.Database.Migrate();
-//    }
-//}
-//catch (Exception ex)
-//{
-//    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-//    logger.LogError(ex, "An error occurred while migrating or seeding the database.");
-
-//    throw;
-//}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -26,7 +26,7 @@ namespace backend.Controllers
                 SameSite = SameSiteMode.Lax,
                 Secure = true,
                 Path = "/",
-                Domain = "therapyapp.local"
+                Domain = "my.therapyapp.ch"
             });
             return NoContent();
         }
