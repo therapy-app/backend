@@ -91,7 +91,7 @@ builder.Services.AddSwaggerGen(swagger =>
 
 builder.Services.AddCors(opts => {
     opts.AddDefaultPolicy(builder => {
-        builder.WithOrigins("http://localhost:4200", "https://therapyapp.local:4200", "https://therapyapp.ch", "https://my.therapyapp.ch")
+        builder.WithOrigins("https://my.therapyapp.local:4200", "https://therapyapp.ch", "https://my.therapyapp.ch")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -113,7 +113,10 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors();
 

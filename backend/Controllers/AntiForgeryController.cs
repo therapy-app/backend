@@ -9,9 +9,11 @@ namespace backend.Controllers
     public class AntiForgeryController : ControllerBase
     {
         private IAntiforgery _antiForgery;
-        public AntiForgeryController(IAntiforgery antiForgery)
+        private IWebHostEnvironment _env;
+        public AntiForgeryController(IAntiforgery antiForgery, IWebHostEnvironment env)
         {
             _antiForgery = antiForgery;
+            _env = env;
         }
 
         [HttpGet]
@@ -26,7 +28,7 @@ namespace backend.Controllers
                 SameSite = SameSiteMode.Lax,
                 Secure = true,
                 Path = "/",
-                Domain = "my.therapyapp.ch"
+                Domain = _env.IsDevelopment() ? "therapyapp.local" : "therapyapp.ch"
             });
             return NoContent();
         }
