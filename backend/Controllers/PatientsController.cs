@@ -16,10 +16,12 @@ namespace backend.Controllers
     public class PatientsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuthorizationService _authorizationService;
 
-        public PatientsController(ApplicationDbContext context)
+        public PatientsController(ApplicationDbContext context, IAuthorizationService authorizationService)
         {
             _context = context;
+            _authorizationService = authorizationService;
         }
 
         // GET: api/Patients

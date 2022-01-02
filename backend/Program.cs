@@ -1,6 +1,8 @@
 
+using backend.Authorization;
 using backend.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -67,6 +69,18 @@ builder.Services.AddAuthentication(options =>
         }
     };
 });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("sameTenantPolicy",
+    policy =>
+        policy.AddRequirements(
+            new SameTenantRequirement()
+        ));
+});
+
+builder.Services.AddSingleton<IAuthorizationHandler, ResourceAuthorizationHandler>();
+
 
 builder.Services.AddSwaggerGen(swagger =>
 {

@@ -5,6 +5,7 @@ namespace backend.Models
     public class ApplicationUser : IdentityUser<Guid>
     {
         public string FullName { get; set; }
+        public Guid SelectedTenant { get; set; }
         public SignUpStep SignUpStep { get; set; }
     }
     public enum SignUpStep

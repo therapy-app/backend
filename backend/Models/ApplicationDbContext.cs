@@ -9,6 +9,8 @@ namespace backend.Models
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
+        public DbSet<backend.Models.Tenant> Tenant { get; set; }
         public DbSet<backend.Models.Patient> Patient { get; set; }
+        public DbSet<backend.Models.Employee> Employee { get; set; }
     }
 }
