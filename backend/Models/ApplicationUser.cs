@@ -5,10 +5,11 @@ namespace backend.Models
     public class ApplicationUser : IdentityUser<Guid>
     {
         public string FullName { get; set; }
-        public Guid SelectedTenant { get; set; }
-        public SignUpStep SignUpStep { get; set; }
+        public bool IsSuperUser { get; set; }
+        public Guid TenantFK { get; set; }
+        public OnboardingStatus OnboardingStatus { get; set; }
     }
-    public enum SignUpStep
+    public enum OnboardingStatus
     {
         CREATED = 0,
         COMPLETED = 1

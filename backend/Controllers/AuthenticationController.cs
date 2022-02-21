@@ -40,6 +40,7 @@ namespace backend.Controllers
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(type: "TenantIdentifier", value: user.TenantFK.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
@@ -57,7 +58,7 @@ namespace backend.Controllers
                 expires: DateTime.Now.AddDays(7),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                );
+            );
 
             Response.Cookies.Append(
                     "Authorization",
@@ -87,7 +88,7 @@ namespace backend.Controllers
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.Email,
-                SignUpStep = SignUpStep.CREATED
+                OnboardingStatus = OnboardingStatus.CREATED
             };
             var result = await userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)

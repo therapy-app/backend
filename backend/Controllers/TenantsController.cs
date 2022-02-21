@@ -29,19 +29,20 @@ namespace backend.Controllers
         }
 
         // GET: api/Tenants
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Tenant>>> GetTenant()
-        {
-            var userId = Guid.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
-            var employeeRegistrations = _context.Employee.Where(employee => employee.UserFK == userId);
-            return await _context.Tenant.Where(tenant => employeeRegistrations.Any(registration => registration.TenantFK == tenant.Id)).ToListAsync();
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Tenant>>> GetTenant()
+        //{
+        //    var userId = Guid.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+        //    var employeeRegistrations = _context.Employee.Where(employee => employee.UserFK == userId);
+        //    return await _context.Tenant.Where(tenant => employeeRegistrations.Any(registration => registration.TenantFK == tenant.Id)).ToListAsync();
+        //}
 
-        // GET: api/Tenants/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Tenant>> GetTenant(Guid id)
+        [HttpGet]
+        public async Task<ActionResult<Tenant>> GetTenant()
         {
-            var tenant = await _context.Tenant.FindAsync(id);
+            var tenantId = Guid.Parse(User.Claims.FirstOrDefault(x => x.Type == "TenantIdentifier")?.Value);
+
+            var tenant = await _context.Tenant.FindAsync(tenantId);
 
             if (tenant == null)
             {
@@ -50,6 +51,20 @@ namespace backend.Controllers
 
             return tenant;
         }
+
+        // GET: api/Tenants/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Tenant>> GetTenant(Guid id)
+        //{
+        //    var tenant = await _context.Tenant.FindAsync(id);
+
+        //    if (tenant == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return tenant;
+        //}
 
         // PUT: api/Tenants/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -88,21 +103,16 @@ namespace backend.Controllers
         public async Task<ActionResult<Tenant>> PostTenant(Tenant tenant)
         {
             var userId = Guid.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+
             tenant.AdminUserFK = userId;
             tenant.Created = DateTime.UtcNow;
             _context.Tenant.Add(tenant);
             await _context.SaveChangesAsync();
 
-            Employee employee = new Employee();
-            employee.TenantFK = tenant.Id;
-            employee.UserFK = userId;
-            employee.IsSuperUser = true;
-            _context.Employee.Add(employee);
-            await _context.SaveChangesAsync();
-
             var user = await _userManager.FindByIdAsync(userId.ToString());
-            user.SelectedTenant = tenant.Id;
-            await _userManager.UpdateAsync(user);
+            user.TenantFK = tenant.Id;
+            user.IsSuperUser = true;
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetTenant", new { id = tenant.Id }, tenant);
         }
