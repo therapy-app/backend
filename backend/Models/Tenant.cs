@@ -7,6 +7,5 @@
         public Guid AdminUserFK { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Deleted { get; set; }
-
     }
 }
